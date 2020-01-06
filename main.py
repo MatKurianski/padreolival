@@ -11,12 +11,15 @@ def start(update, context):
 def main():
   TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
   PORT = int(os.environ.get('PORT', '8443'))
+  PROD = os.environ.get('PROD', False)
+
   updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
 
-  updater.start_webhook(listen="0.0.0.0",
+  if PROD:
+    updater.start_webhook(listen="0.0.0.0",
                         port=PORT,
                         url_path=TELEGRAM_TOKEN)
-  updater.bot.set_webhook("https://padreolival.herokuapp.com/" + TELEGRAM_TOKEN)
+    updater.bot.set_webhook("https://padreolival.herokuapp.com/" + TELEGRAM_TOKEN)
 
   dispatcher = updater.dispatcher
 
