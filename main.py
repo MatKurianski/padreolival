@@ -1,14 +1,10 @@
-import logging
 import os
 
 from telegram.ext import Updater, CommandHandler
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
-)
-LOGGER = logging.getLogger(__name__)
+from confessar import CONFESSAR
 
-def start(update, _):
+def start(update, context):
     update.message.reply_text('Salve!')
 
 def main():
@@ -25,6 +21,7 @@ def main():
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CONFESSAR)
     updater.start_polling()
 
     updater.idle()
