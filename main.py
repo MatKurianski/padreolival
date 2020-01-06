@@ -1,8 +1,11 @@
 import os
 
 from telegram.ext import Updater, CommandHandler
+from dotenv import load_dotenv, find_dotenv
 
 from confessar import CONFESSAR
+
+load_dotenv(find_dotenv())
 
 def start(update, context):
     update.message.reply_text('Salve!')
