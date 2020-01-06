@@ -1,32 +1,33 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 import os
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+from telegram.ext import Updater, CommandHandler
 
-def start(update, context):
-  update.message.reply_text('Salve!')
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+LOGGER = logging.getLogger(__name__)
+
+def start(update, _):
+    update.message.reply_text('Salve!')
 
 def main():
-  TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-  PORT = int(os.environ.get('PORT', '8443'))
-  PROD = os.environ.get('PROD', False)
+    telegram_toker = os.getenv("TELEGRAM_TOKEN")
+    port = int(os.environ.get('PORT', '8443'))
+    prod = os.environ.get('PROD', False)
 
-  updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
+    updater = Updater(token=telegram_toker, use_context=True)
 
-  if PROD:
-    updater.start_webhook(listen="0.0.0.0",
-                        port=PORT,
-                        url_path=TELEGRAM_TOKEN)
-    updater.bot.set_webhook("https://padreolival.herokuapp.com/" + TELEGRAM_TOKEN)
+    if prod:
+        updater.start_webhook(listen="0.0.0.0", port=port, url_path=telegram_toker)
+        updater.bot.set_webhook("https://padreolival.herokuapp.com/" + telegram_toker)
 
-  dispatcher = updater.dispatcher
+    dispatcher = updater.dispatcher
 
-  dispatcher.add_handler(CommandHandler("start", start))
-  updater.start_polling()
+    dispatcher.add_handler(CommandHandler("start", start))
+    updater.start_polling()
 
-  updater.idle()
+    updater.idle()
 
 if __name__ == "__main__":
-  main()
+    main()
