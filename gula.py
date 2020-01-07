@@ -1,7 +1,7 @@
 from enum import Enum
 import json
 
-from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
+from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackQueryHandler, CommandHandler
 from models import PecadoGula
 
 class FasesGula(Enum):
@@ -26,7 +26,9 @@ CONVERSA_GULA = ConversationHandler(
     states={
         FasesGula.FIM: [MessageHandler(Filters.text, _fim_gula)]
     },
-    fallbacks=[],
+    fallbacks=[
+        CommandHandler('cancel', lambda update, context: ConversationHandler.END)
+    ],
     map_to_parent={
         ConversationHandler.END: ConversationHandler.END
     }
