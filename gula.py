@@ -1,6 +1,8 @@
 from enum import Enum
+import json
 
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
+from models import PecadoGula
 
 class FasesGula(Enum):
     NOME = 'Nome'
@@ -12,8 +14,11 @@ def _nome_gula(update, context):
     return FasesGula.FIM
 
 def _fim_gula(update, context):
-    res = update.message.text
-    update.message.reply_text("Vejo que respondeu \"{}\"".format(res))
+    nome_pecado = update.message.text
+    usuario = update.effective_user
+    novo_pecado = PecadoGula(nome_pecado, usuario)
+    result = novo_pecado.save()
+    update.message.reply_text(json.dumps(result, indent=2, default=str, ensure_ascii=False))
     return ConversationHandler.END
 
 CONVERSA_GULA = ConversationHandler(
