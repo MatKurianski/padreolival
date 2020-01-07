@@ -26,5 +26,8 @@ CONVERSA_GULA = ConversationHandler(
     states={
         FasesGula.FIM: [MessageHandler(Filters.text, _fim_gula)]
     },
-    fallbacks=[]
+    fallbacks=[],
+    map_to_parent={
+        ConversationHandler.END: ConversationHandler.END
+    }
 )
