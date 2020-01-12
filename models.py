@@ -2,8 +2,9 @@ from datetime import datetime
 from db import db
 
 class Pecado:
-    def __init__(self, nome, user):
+    def __init__(self, nome, tipo, user):
         self.nome = nome
+        self.tipo = tipo
         self.user = {
             'id': user.id,
             'first_name': user.first_name,
@@ -12,14 +13,10 @@ class Pecado:
         }
 
     def save(self):
-        pass
-
-class PecadoGula(Pecado):
-    def save(self):
         _novo_pecado = {
             'nome': self.nome,
             'user': self.user,
-            'tipo': 'Gula',
+            'tipo': self.tipo,
             'data': datetime.utcnow()
         }
         novo_pecado = _novo_pecado.copy()

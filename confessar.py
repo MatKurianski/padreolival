@@ -1,20 +1,16 @@
 from enum import Enum
-from telegram.ext import ConversationHandler, CommandHandler
+from telegram.ext import ConversationHandler, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from models import Pecado
+import json
 
-from gula import CONVERSA_GULA
-from logger import LOGGER
-
-class Categorias(Enum):
-    ESCOLHER = "Escolher"
-    GULA = "Gula"
-    GANANCIA = "Ganancia"
-    FIM = "Fim"
+class FLUXO(Enum):
+    ESCOLHER, RECOLHER_NOME, FIM = range(3)
 
 def escolher_categoria(update, context):
     teclado_categorias = [[
-        InlineKeyboardButton(text='Gula', callback_data=Categorias.GULA.value),
-        InlineKeyboardButton('Ganância', callback_data=Categorias.GANANCIA.value)
+        InlineKeyboardButton(text='Gula', callback_data='Gula'),
+        InlineKeyboardButton(text='Ganância', callback_data='Ganância')
     ]]
     categorias_markup = InlineKeyboardMarkup(
         inline_keyboard=teclado_categorias
@@ -23,14 +19,25 @@ def escolher_categoria(update, context):
         'Que pena que pecaste, filho. Por favor, qual a categoria?\n',
         reply_markup=categorias_markup
     )
-    return Categorias.ESCOLHER
+    return FLUXO.ESCOLHER
 
 def escolher(update, context):
-    escolha = update.message.text
-    usuario = update.effective_user.full_name
-    if Categorias.GULA.value == escolha:
-        LOGGER.info('{} escolheu "{}"'.format(usuario, escolha))
-        return Categorias.GULA
+    _escolha = update.callback_query.data
+    context.user_data['tipo'] = _escolha
+    update.callback_query.edit_message_text('Insira o nome do seu pecado aqui')
+    return FLUXO.RECOLHER_NOME
+
+def recolher_nome(update, context):
+    nome = update.message.text
+    tipo = context.user_data['tipo']
+    user = update.effective_user
+
+    # TODO
+    # if context.pecado['tipo'] == 'Ganância': return FLUXO.PERGUNTAR_PRECO
+
+    pecado = Pecado(nome, tipo, user)
+    result = pecado.save()
+    update.message.reply_text(json.dumps(result, indent=2, default=str, ensure_ascii=False))
     return ConversationHandler.END
 
 def cancel(update, context):
@@ -39,7 +46,8 @@ def cancel(update, context):
 CONFESSAR = ConversationHandler(
     entry_points=[CommandHandler('confessar', escolher_categoria)],
     states={
-        Categorias.ESCOLHER: [CONVERSA_GULA]
+        FLUXO.ESCOLHER: [CallbackQueryHandler(escolher)],
+        FLUXO.RECOLHER_NOME: [MessageHandler(Filters.text, recolher_nome)]
     },
     fallbacks=[
         CommandHandler('cancel', cancel)
