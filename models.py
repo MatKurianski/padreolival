@@ -23,4 +23,5 @@ class Pecado:
 
     def save(self):
         novo_pecado = self.pecado.copy()
+        pecados.insert_one(self.pecado)
         return novo_pecado
