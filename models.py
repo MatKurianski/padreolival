@@ -1,24 +1,26 @@
+import os
 from datetime import datetime
 from db import db
 
+PROD = os.environ.get('PROD', False)
+
+if PROD:
+    pecados = db.pecado
+else:
+    pecados = db.development
+
 class Pecado:
-    def __init__(self, nome, tipo, user):
-        self.nome = nome
-        self.tipo = tipo
-        self.user = {
+    def __init__(self, pecado, user):
+        pecado['data'] = datetime.utcnow()
+        _user = {
             'id': user.id,
             'first_name': user.first_name,
             'last_name': user.last_name,
             'username': user.username,
         }
+        pecado['user'] = _user
+        self.pecado = pecado
 
     def save(self):
-        _novo_pecado = {
-            'nome': self.nome,
-            'user': self.user,
-            'tipo': self.tipo,
-            'data': datetime.utcnow()
-        }
-        novo_pecado = _novo_pecado.copy()
-        db.pecado.insert_one(novo_pecado)
-        return _novo_pecado
+        novo_pecado = self.pecado.copy()
+        return novo_pecado
