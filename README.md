@@ -1,8 +1,10 @@
 # Padre Olival
 
+<img src="./screenshots/1.png"  width="240" alt="Demonstração do bot" />
+
 Esse repositório foi um pequeno treino em Python, para auxiliar uma aposta que eu e um amigo fizemos nas férias.
 
-Padre Olival é um bot onde confessávamos sempre que comíamos alguma besteira ou gastavámos desnecessariamente.
+Padre Olival é um bot para Telegram onde confessávamos sempre que comíamos alguma besteira ou gastavámos desnecessariamente.
 
 Armazenamos os "pecados" usando MongoDB. Um exemplo de documento seria:
 
